@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proposal Spidey (Final)</title>
+    <title>Proposal Spidey (Improvisasi)</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. CSS Dasar & Latar Belakang (Disesuaikan) --- */
+        /* --- CSS Dasar & Latar Belakang --- */
         body {
             margin: 0;
-            /* Latar belakang dinamis Anda */
             background: radial-gradient(circle at center, #ff0000, #001d5e); 
             overflow: hidden;
             color: white;
@@ -18,7 +17,7 @@
             height: 100vh;
         }
 
-        /* --- 2. Posisi Judul (H1) --- */
+        /* --- Posisi Judul (H1) --- */
         h1 {
             position: absolute;
             top: 20%; 
@@ -32,7 +31,7 @@
             z-index: 10;
         }
         
-        /* --- 3. Posisi Konten Utama (Checklist & Tombol) --- */
+        /* --- Posisi Konten Utama (Checklist & Tombol) --- */
         #mainContent {
             position: absolute;
             top: 60%; 
@@ -45,7 +44,7 @@
             z-index: 10;
         }
         
-        /* --- 4. Desain Checklist (To-do List Style) --- */
+        /* --- Desain Checklist (To-do List Style) --- */
         .choices {
             display: flex;
             flex-direction: column;
@@ -93,9 +92,11 @@
             transition: 0.3s;
         }
 
+        /* IMPR. 1b: Feedback Visual Checklist */
         .checkbox-label input:checked ~ .checkmark {
             background-color: #ff0000;
             border: 2px solid white;
+            box-shadow: 0 0 10px rgba(0, 115, 186, 0.8); /* Cahaya Biru */
         }
 
         .checkmark:after {
@@ -137,9 +138,11 @@
             width: 100%;
         }
 
+        /* IMPR. 1c: Efek Hover Tombol Utama */
         .official-btn:hover:enabled {
             transform: scale(1.02);
             background: #ff3333;
+            border: 3px solid #001d5e; /* Border Biru Tua */
         }
 
         .official-btn:disabled {
@@ -184,13 +187,29 @@
             max-width: 350px;
             position: relative;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
-            animation: zoomIn 0.5s ease-out;
+            /* IMPR. 1d: Animasi Pop-up yang Lebih Dramatis */
+            animation: zoomIn 0.5s ease-out, webTension 0.4s ease-in-out; 
+        }
+
+        /* IMPR. 1d: Efek getaran/tarikan jaring */
+        @keyframes webTension {
+            0% { transform: scale(1) rotate(0deg); }
+            30% { transform: scale(1.05) rotate(3deg); }
+            60% { transform: scale(1.05) rotate(-3deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
         .popup-content h2 {
             color: #ffdd00; 
             font-size: 1.8em;
             margin-top: 0;
+        }
+
+        /* IMPR. 1a: Ikon Pop-up yang lebih menarik */
+        .spidey-icon {
+            font-size: 5em;
+            margin: 10px 0;
+            line-height: 1;
         }
 
         .popup-content p {
@@ -259,8 +278,8 @@
     <div id="spideyPopup" class="popup">
         <div class="popup-content">
             <h2 class="spidey-text">YES! Target Terciduk!</h2>
-            <p>🕷️🕸️</p>
-            <p>❤️ Kamu Menerima Misinya! ❤️</p>
+            <div class="spidey-icon">🕷️❤️</div> 
+            <p>Kamu Menerima Misinya! 🎉</p>
             <p>Sekarang **OFFICIAL UR GF**!</p>
         </div>
     </div>
@@ -331,7 +350,6 @@
 
 
         const checkSelections = () => {
-            // Cek apakah setidaknya satu opsi "Ya" sudah dipilih
             let isAnyChoiceSelected = false;
             choiceCheckboxes.forEach(checkbox => {
                 if (checkbox.checked) {
@@ -357,7 +375,6 @@
                     selectAllCheckbox.checked = false;
                 }
                 
-                // Cek apakah semua opsi "Ya" sudah dicentang
                 let allChecked = true;
                 choiceCheckboxes.forEach(cb => {
                     if (!cb.checked) {
@@ -376,7 +393,6 @@
         officialButton.addEventListener('click', () => {
             if (officialButton.disabled) return;
             
-            // Sembunyikan konten dan judul
             mainContent.style.opacity = 0;
             mainContent.style.pointerEvents = 'none';
             heading.style.opacity = 0;
@@ -388,7 +404,6 @@
                 opacity += 0.05; 
                 if (opacity >= 1) {
                     clearInterval(interval);
-                    // Tampilkan Pop-up
                     spideyPopup.classList.add('show');
                 }
             }, 30);
