@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proposal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Proposal Spidey (Final Romantis)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
     <style>
         /* --- 1. CSS Dasar & Latar Belakang --- */
         body {
@@ -17,7 +17,7 @@
             height: 100vh;
         }
 
-        /* --- 2. Opening Screen (10 Detik) --- */
+        /* --- 2. Opening Screen (5 Detik) + Gradient --- */
         #openingScreen {
             position: fixed;
             top: 0;
@@ -34,6 +34,17 @@
             opacity: 1;
             transition: opacity 1s ease-out;
         }
+        /* Gradient overlay di atas opening screen */
+        #openingScreen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.4) 100%);
+            z-index: 2000;
+        }
 
         .opening-text {
             font-size: 2.5em;
@@ -42,64 +53,59 @@
             z-index: 2001;
         }
 
-        /* Spiderman Menurun */
+        /* --- GIF SPIDERMAN TURUN --- */
         .spidey-swing {
-            width: 100px;
-            height: 100px;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/90/Spiderman_icon.svg'); /* Free use icon placeholder */
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            animation: 
-                swingDown 3s ease-in-out 1s, /* Animasi turun */
-                swingSide 1.5s ease-in-out 1s infinite alternate; /* Animasi ayunan */
-            position: relative;
-            transform-origin: top center;
+            width: 150px; 
+            height: auto;
+            max-width: 80%;
+            margin: 20px 0;
             z-index: 2001;
+            animation: dropDown 3s ease-out; 
         }
 
-        @keyframes swingDown {
-            from { transform: translateY(-500px); }
-            to { transform: translateY(0); }
+        @keyframes dropDown {
+            0% { transform: translateY(-300px); opacity: 0; }
+            30% { transform: translateY(0px); opacity: 1; }
+            70% { transform: translateY(0px); opacity: 1; }
+            100% { transform: translateY(0px); opacity: 1; }
         }
-
-        @keyframes swingSide {
-            from { transform: rotate(-5deg); }
-            to { transform: rotate(5deg); }
-        }
-
 
         .disappear {
             opacity: 0 !important;
             pointer-events: none;
         }
 
-        /* --- 3. Posisi Judul (H1) - Disesuaikan --- */
+        /* --- 3. Posisi Judul (H1) - ROMANTIS & Jarak Diperlebar --- */
         h1 {
             position: absolute;
-            top: 10%; /* Sedikit lebih bawah dari sebelumnya */
+            top: 15%; 
             left: 50%;
             transform: translateX(-50%);
             font-size: 1.7em;
-            width: 80%;
+            width: 85%;
             line-height: 1.5em;
             opacity: 0;
-            /* Muncul setelah opening (10s + 1s fade) */
-            animation: fadeIn 2s ease forwards 11s; 
+            /* FONT ROMANTIS */
+            font-family: 'Playfair Display', serif; 
+            font-style: italic;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            /* Waktu muncul: 5s + 1s fade = 6s */
+            animation: fadeIn 2s ease forwards 6s; 
             z-index: 10;
         }
         
-        /* --- 4. Posisi Konten Utama (Checklist & Tombol) - Disesuaikan --- */
+        /* --- 4. Posisi Konten Utama (Checklist & Tombol) - Jarak Diperlebar --- */
         #mainContent {
             position: absolute;
-            top: 70%; /* Posisikan di tengah bawah */
+            top: 70%; 
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
             max-width: 400px;
             opacity: 0;
-             /* Muncul setelah judul (11s + 1s fade) */
-            animation: fadeIn 2s ease forwards 12s; 
+            /* Waktu muncul: 6s + 1s fade = 7s */
+            animation: fadeIn 2s ease forwards 7s; 
             z-index: 10;
         }
         
@@ -107,7 +113,7 @@
         .choices {
             display: flex;
             flex-direction: column;
-            gap: 12px; /* Lebih lebar karena isinya lebih sedikit */
+            gap: 12px;
             margin-bottom: 35px;
             padding: 10px;
             background: rgba(0, 0, 0, 0.2); 
@@ -128,63 +134,13 @@
             text-align: left;
         }
         
-        /* Hapus border-bottom pada elemen terakhir */
         .choices .checkbox-label:last-child {
             border-bottom: none;
         }
 
-        .checkbox-label:hover {
-            background-color: rgba(255, 255, 255, 0.1); 
-        }
+        /* ... (CSS checklist lainnya sama) ... */
         
-        /* Hapus styling select-all */
-        .select-all {
-            display: none !important; 
-        }
-
-        .choice-checkbox {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
-        
-        .checkmark {
-            position: absolute;
-            top: 50%;
-            left: 5px; 
-            transform: translateY(-50%);
-            height: 20px; 
-            width: 20px;
-            background-color: transparent;
-            border-radius: 3px;
-            border: 2px solid #ff0000; 
-            transition: 0.3s;
-        }
-
-        .checkbox-label input:checked ~ .checkmark {
-            background-color: #ff0000;
-            border: 2px solid white;
-            box-shadow: 0 0 10px rgba(0, 115, 186, 0.8);
-        }
-
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-            left: 7px;
-            top: 3px;
-            width: 4px;
-            height: 8px;
-            border: solid white;
-            border-width: 0 3px 3px 0;
-            transform: rotate(45deg);
-        }
-
-        .checkbox-label input:checked ~ .checkmark:after {
-            display: block;
-        }
-        
-        /* --- 6. Tombol Utama (OFFICIAL UR GF) --- */
+        /* --- 6. Tombol Utama ("Send proposal 💌") --- */
         .official-btn {
             padding: 15px 30px;
             font-size: 1.3em;
@@ -218,6 +174,12 @@
             top: 0;
             left: 0;
             z-index: 1; 
+            opacity: 0;
+            transition: opacity 1s; 
+        }
+
+        .show-canvas {
+            opacity: 1 !important;
         }
         
         .popup {
@@ -250,11 +212,11 @@
             animation: zoomIn 0.5s ease-out, webTension 0.4s ease-in-out; 
         }
 
-        @keyframes webTension {
-            0% { transform: scale(1) rotate(0deg); }
-            30% { transform: scale(1.05) rotate(3deg); }
-            60% { transform: scale(1.05) rotate(-3deg); }
-            100% { transform: scale(1) rotate(0deg); }
+        .popup-gif {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 15px 0;
         }
 
         .popup-content h2 {
@@ -263,17 +225,13 @@
             margin-top: 0;
         }
 
-        .spidey-icon {
-            font-size: 5em;
-            margin: 10px 0;
-            line-height: 1;
+        .spidey-text-final {
+            color: white;
+            font-size: 1.1em;
+            font-family: "Poppins", sans-serif;
         }
 
-        .popup-content p {
-            font-size: 1.2em;
-            margin-bottom: 0;
-        }
-
+        /* ... (keyframes sama) ... */
         @keyframes fadeIn {
             to {
                 opacity: 1;
@@ -296,14 +254,14 @@
     
     <div id="openingScreen">
         <div class="opening-text">Halo cantikku, Angel 🕷️</div>
-        <div class="spidey-swing"></div> 
+        <img src="spidey_swing.gif" alt="Spider-Man Swinging" class="spidey-swing"> 
     </div>
 
     <canvas id="webCanvas"></canvas>
     
     <h1>
         Kita nih nggak cocok temenan deh tapi kamu jangan punya pacar dulu plis kalo pacarnya aku gapapa sih....<br />
-        Jadi, boleh nggak aku jadi pacar kamu? 🕸️
+        **Jadi, boleh nggak aku jadi pacar kamu? 🕸️**
     </h1>
 
     <div id="mainContent">
@@ -328,31 +286,34 @@
         </div>
 
         <button id="officialBtn" class="official-btn" disabled>
-            OFFICIAL UR GF
+            Send proposal 💌
         </button>
     </div>
 
     <div id="spideyPopup" class="popup">
         <div class="popup-content">
-            <h2 class="spidey-text">YES! Target Terciduk!</h2>
-            <div class="spidey-icon">🕷️❤️</div> 
-            <p>Kamu Menerima Misinya! 🎉</p>
-            <p>Sekarang **OFFICIAL UR GF**!</p>
+            <h2 class="spidey-text-final">YEAH!</h2>
+            <img src="https://i.pinimg.com/originals/b9/6c/17/b96c17ba00f340b14260183b0502d89b.gif" alt="Spider-Man Proposal Success" class="popup-gif">
+            <p class="spidey-text-final">It’s official — You’re mine now (and I’m yours 😳)</p>
         </div>
     </div>
 
     <script>
-        // --- LOGIKA OPENING SCREEN ---
+        // --- LOGIKA OPENING SCREEN DAN CANVAS ---
         document.addEventListener('DOMContentLoaded', () => {
             const openingScreen = document.getElementById('openingScreen');
+            const webCanvas = document.getElementById('webCanvas');
             
-            // Waktu tayang opening screen (10 detik)
-            const displayTime = 10000; 
+            // Waktu tayang opening screen (5 detik)
+            const displayTime = 5000; 
 
             setTimeout(() => {
-                // Hilangkan opening screen dengan transisi opacity
+                // 1. Hilangkan opening screen
                 openingScreen.classList.add('disappear');
                 
+                // 2. Tampilkan canvas di latar belakang
+                webCanvas.classList.add('show-canvas');
+
                 // Hapus elemen setelah transisi selesai (1 detik)
                 setTimeout(() => {
                     openingScreen.style.display = 'none';
@@ -417,7 +378,7 @@
             height = canvas.height = window.innerHeight;
         });
 
-        // --- CHECKLIST & POPUP LOGIC (Disesuaikan untuk 3 Pilihan) ---
+        // --- CHECKLIST & POPUP LOGIC ---
         const choiceCheckboxes = document.querySelectorAll('.choice-checkbox');
         const officialButton = document.getElementById('officialBtn');
         const spideyPopup = document.getElementById('spideyPopup');
@@ -426,7 +387,6 @@
 
 
         const checkSelections = () => {
-            // Cek apakah setidaknya SATU dari 3 opsi sudah dicentang
             let isAnyChoiceSelected = false;
             choiceCheckboxes.forEach(checkbox => {
                 if (checkbox.checked) {
@@ -436,12 +396,10 @@
             officialButton.disabled = !isAnyChoiceSelected;
         };
 
-        // Logika Opsi Individu (Tidak ada lagi "Benar Semua")
         choiceCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', checkSelections);
         });
 
-        // Fungsionalitas Tombol Resmi
         officialButton.addEventListener('click', () => {
             if (officialButton.disabled) return;
             
@@ -449,7 +407,6 @@
             mainContent.style.pointerEvents = 'none';
             heading.style.opacity = 0;
 
-            // Efek jaring laba-laba menebal
             let opacity = 0.2;
             const interval = setInterval(() => {
                 ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
@@ -461,7 +418,6 @@
             }, 30);
         });
 
-        // Tutup pop-up jika mengklik di luar
         spideyPopup.addEventListener('click', (event) => {
             if (event.target === spideyPopup) {
                 spideyPopup.classList.remove('show');
@@ -472,5 +428,3 @@
     </script>
 </body>
 </html>
-
-
