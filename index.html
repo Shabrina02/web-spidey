@@ -1,105 +1,40 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Boleh Ga Aku Jadi Pacar Kamu?</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at top, #1a1a2e, #000);
-      color: white;
-      font-family: "Poppins", sans-serif;
-      overflow: hidden;
-    }
-
-    h1 {
-      text-align: center;
-      color: #ff4d4d;
-      text-shadow: 0 0 10px #ff0000;
-    }
-
-    .button-container {
-      display: flex;
-      gap: 1rem;
-      margin-top: 20px;
-    }
-
-    button {
-      background-color: #ff0000;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      font-size: 1rem;
-      cursor: pointer;
-      border-radius: 8px;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background-color: #e60000;
-      transform: scale(1.1);
-    }
-
-    #spider {
-      position: absolute;
-      top: -100px;
-      width: 100px;
-      transition: top 2s ease-in-out;
-    }
-
-    #web {
-      position: absolute;
-      top: 0;
-      width: 2px;
-      height: 0;
-      background: white;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: height 2s ease-in-out;
-    }
-
-    .message {
-      display: none;
-      margin-top: 30px;
-      font-size: 1.3rem;
-      color: #fff;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal Spidey</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>Boleh ga aku jadi pacar kamu?</h1>
 
-  <div class="button-container">
-    <button id="yes">✅ Boleh</button>
-    <button id="yes2">💞 BOLEH BANGET</button>
-  </div>
+    <div class="container">
+        <h1 class="spidey-text">boleh ga aku jadi pacar kamu?</h1>
 
-  <div id="web"></div>
-  <img id="spider" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Spider_cartoon.svg" alt="spider" />
-  <div class="message" id="message">Hehehe, udah resmi ya 😳💖</div>
+        <div class="choices" id="choiceContainer">
+            <button class="choice-btn" data-value="boleh">boleh</button>
+            <button class="choice-btn" data-value="boleh banget">BOLEH BANGET</button>
+            <button class="choice-btn" data-value="ngomong langsung">boleh [ngomong langsung]</button>
+            <button class="choice-btn" data-value="benar semua">benar semua</button>
+        </div>
 
-  <script>
-    const spider = document.getElementById("spider");
-    const web = document.getElementById("web");
-    const message = document.getElementById("message");
+        <button id="officialBtn" class="official-btn" disabled>
+            OFFICIAL UR GF
+        </button>
+    </div>
 
-    function dropSpider() {
-      web.style.height = "200px";
-      spider.style.top = "100px";
+    <div id="spideyPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <div class="popup-icon">
+                <p>🕷️🕸️</p>
+                <h1>YES! Kamu Menerima Misinya!</h1>
+                <p>❤️ Selamat, sekarang **OFFICIAL UR GF**! ❤️</p>
+            </div>
+            </div>
+    </div>
 
-      setTimeout(() => {
-        message.style.display = "block";
-      }, 2000);
-    }
-
-    document.getElementById("yes").addEventListener("click", dropSpider);
-    document.getElementById("yes2").addEventListener("click", dropSpider);
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
