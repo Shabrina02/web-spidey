@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proposal Spidey</title>
+    <title>Proposal Spidey (Final)</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS Dasar & Animasi (Milim Anda) --- */
+        /* --- 1. CSS Dasar & Latar Belakang (Disesuaikan) --- */
         body {
             margin: 0;
+            /* Latar belakang dinamis Anda */
             background: radial-gradient(circle at center, #ff0000, #001d5e); 
             overflow: hidden;
             color: white;
@@ -17,41 +18,41 @@
             height: 100vh;
         }
 
-        /* --- Perbaikan Posisi Judul (Teks) --- */
+        /* --- 2. Posisi Judul (H1) --- */
         h1 {
             position: absolute;
-            top: 20%; /* Posisikan lebih ke atas */
+            top: 20%; 
             left: 50%;
             transform: translateX(-50%);
             font-size: 1.7em;
             width: 80%;
             line-height: 1.5em;
             opacity: 0;
-            animation: fadeIn 2s ease forwards 1s;
+            animation: fadeIn 2s ease forwards 1s; 
             z-index: 10;
         }
         
-        /* --- Perbaikan Posisi Konten Utama (Checklist & Tombol) --- */
+        /* --- 3. Posisi Konten Utama (Checklist & Tombol) --- */
         #mainContent {
             position: absolute;
-            top: 60%; /* Posisikan lebih ke bawah */
+            top: 60%; 
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
             max-width: 400px;
             opacity: 0;
-            animation: fadeIn 2s ease forwards 2s;
+            animation: fadeIn 2s ease forwards 2s; 
             z-index: 10;
         }
         
-        /* --- Desain Checkbox Baru (Note/To-do List) --- */
+        /* --- 4. Desain Checklist (To-do List Style) --- */
         .choices {
             display: flex;
             flex-direction: column;
-            gap: 8px; /* Jarak antar item lebih kecil */
+            gap: 8px;
             margin-bottom: 25px;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.2); /* Latar belakang semi-transparan tipis */
+            background: rgba(0, 0, 0, 0.2); 
             border-radius: 8px;
         }
 
@@ -59,18 +60,18 @@
             display: flex;
             align-items: center;
             position: relative;
-            padding: 10px 15px 10px 40px; /* Kurangi padding kiri */
+            padding: 10px 15px 10px 40px;
             cursor: pointer;
             font-size: 1.1em;
             user-select: none;
-            background-color: transparent; /* TIDAK ADA BACKGROUND SOLID */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Garis bawah tipis */
+            background-color: transparent; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
             transition: background-color 0.3s;
             text-align: left;
         }
         
         .checkbox-label:hover {
-            background-color: rgba(255, 255, 255, 0.1); /* Hover tipis */
+            background-color: rgba(255, 255, 255, 0.1); 
         }
         
         .choice-checkbox {
@@ -79,27 +80,24 @@
             cursor: pointer;
         }
         
-        /* Kotak checklist custom */
         .checkmark {
             position: absolute;
             top: 50%;
-            left: 5px; /* Posisikan lebih ke kiri */
+            left: 5px; 
             transform: translateY(-50%);
-            height: 20px; /* Ukuran lebih kecil */
+            height: 20px; 
             width: 20px;
-            background-color: transparent; /* Tetap transparan saat belum dicentang */
+            background-color: transparent;
             border-radius: 3px;
-            border: 2px solid #ff0000; /* Border Merah Spidey */
+            border: 2px solid #ff0000; 
             transition: 0.3s;
         }
 
-        /* Tampilan kotak saat di-check */
         .checkbox-label input:checked ~ .checkmark {
             background-color: #ff0000;
             border: 2px solid white;
         }
 
-        /* Styling Centang */
         .checkmark:after {
             content: "";
             position: absolute;
@@ -117,19 +115,14 @@
             display: block;
         }
         
-        .divider {
-            /* Hapus pemisah agar menyatu dengan garis border-bottom */
-            display: none; 
-        }
-        
         .select-all {
             font-weight: 700;
-            background-color: rgba(0, 29, 94, 0.4); /* Biru tua untuk kontras */
-            border-top: 2px solid #ff0000; /* Garis tebal di atas "benar semua" */
+            background-color: rgba(0, 29, 94, 0.4); 
+            border-top: 2px solid #ff0000; 
             border-bottom: none;
         }
         
-        /* --- Tombol Utama (OFFICIAL UR GF) (Tetap Sama) --- */
+        /* --- 5. Tombol Utama --- */
         .official-btn {
             padding: 15px 30px;
             font-size: 1.3em;
@@ -156,14 +149,71 @@
             transform: translateY(4px);
         }
 
-        /* --- Pop-up & Canvas (Tetap Sama) --- */
-        .popup { /* ... styling pop-up ... */ }
-        .popup.show { /* ... */ }
-        .popup-content { /* ... */ }
-        canvas { /* ... */ }
-        @keyframes fadeIn { /* ... */ }
-        @keyframes zoomIn { /* ... */ }
+        /* --- 6. Canvas & Pop-up --- */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1; 
+        }
         
+        .popup {
+            display: none; 
+            position: fixed;
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup.show {
+            display: flex;
+        }
+
+        .popup-content {
+            background-color: #1a1a2e;
+            padding: 40px;
+            border-radius: 15px;
+            border: 5px solid #ff0000;
+            width: 80%;
+            max-width: 350px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        .popup-content h2 {
+            color: #ffdd00; 
+            font-size: 1.8em;
+            margin-top: 0;
+        }
+
+        .popup-content p {
+            font-size: 1.2em;
+            margin-bottom: 0;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -215,11 +265,8 @@
         </div>
     </div>
 
-    <audio id="thwipSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_2f5b3d802a.mp3" preload="auto"></audio>
-
     <script>
-        // --- JavaScript Logic (Tetap Sama) ---
-        // ... (Semua kode JavaScript dari respons sebelumnya diletakkan di sini) ...
+        // --- CANVAS ANIMATION (Jaring) ---
         const canvas = document.getElementById("webCanvas");
         const ctx = canvas.getContext("2d");
         let width = (canvas.width = window.innerWidth);
@@ -279,12 +326,12 @@
         const selectAllCheckbox = document.getElementById('selectAll');
         const officialButton = document.getElementById('officialBtn');
         const spideyPopup = document.getElementById('spideyPopup');
-        const thwipSound = document.getElementById("thwipSound");
         const mainContent = document.getElementById("mainContent");
         const heading = document.querySelector("h1");
 
 
         const checkSelections = () => {
+            // Cek apakah setidaknya satu opsi "Ya" sudah dipilih
             let isAnyChoiceSelected = false;
             choiceCheckboxes.forEach(checkbox => {
                 if (checkbox.checked) {
@@ -294,7 +341,7 @@
             officialButton.disabled = !isAnyChoiceSelected;
         };
 
-        // 1. Fungsionalitas 'Benar Semua'
+        // Logika 'Benar Semua'
         selectAllCheckbox.addEventListener('change', function() {
             const isChecked = this.checked;
             choiceCheckboxes.forEach(checkbox => {
@@ -303,13 +350,14 @@
             checkSelections();
         });
 
-        // 2. Fungsionalitas Opsi Biasa
+        // Logika Opsi Individu
         choiceCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 if (!this.checked) {
                     selectAllCheckbox.checked = false;
                 }
                 
+                // Cek apakah semua opsi "Ya" sudah dicentang
                 let allChecked = true;
                 choiceCheckboxes.forEach(cb => {
                     if (!cb.checked) {
@@ -324,28 +372,29 @@
             });
         });
 
-        // 3. Fungsionalitas Tombol Resmi
+        // Fungsionalitas Tombol Resmi
         officialButton.addEventListener('click', () => {
             if (officialButton.disabled) return;
             
-            thwipSound.play();
-            
+            // Sembunyikan konten dan judul
             mainContent.style.opacity = 0;
             mainContent.style.pointerEvents = 'none';
             heading.style.opacity = 0;
 
+            // Efek jaring laba-laba menebal
             let opacity = 0.2;
             const interval = setInterval(() => {
                 ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
                 opacity += 0.05; 
                 if (opacity >= 1) {
                     clearInterval(interval);
+                    // Tampilkan Pop-up
                     spideyPopup.classList.add('show');
                 }
             }, 30);
         });
 
-        // 4. Tutup pop-up
+        // Tutup pop-up jika mengklik di luar
         spideyPopup.addEventListener('click', (event) => {
             if (event.target === spideyPopup) {
                 spideyPopup.classList.remove('show');
