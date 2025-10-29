@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proposal Spidey (Improvisasi)</title>
+    <title>Proposal Spidey (Final)</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS Dasar & Latar Belakang --- */
+        /* --- 1. CSS Dasar & Latar Belakang --- */
         body {
             margin: 0;
             background: radial-gradient(circle at center, #ff0000, #001d5e); 
@@ -17,39 +17,65 @@
             height: 100vh;
         }
 
-        /* --- Posisi Judul (H1) --- */
+        /* --- 2. Opening Screen --- */
+        #openingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ff0000; /* Merah menyala Spiderman */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5em;
+            font-weight: 900;
+            z-index: 2000; /* Paling atas */
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        .disappear {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        /* --- 3. Posisi Judul (H1) - Direvisi --- */
         h1 {
             position: absolute;
-            top: 20%; 
+            top: 15%; /* Posisikan lebih ke atas */
             left: 50%;
             transform: translateX(-50%);
             font-size: 1.7em;
             width: 80%;
             line-height: 1.5em;
             opacity: 0;
-            animation: fadeIn 2s ease forwards 1s; 
+            /* Animation delay disesuaikan agar muncul setelah opening screen */
+            animation: fadeIn 2s ease forwards 4s; 
             z-index: 10;
         }
         
-        /* --- Posisi Konten Utama (Checklist & Tombol) --- */
+        /* --- 4. Posisi Konten Utama (Checklist & Tombol) - Direvisi --- */
         #mainContent {
             position: absolute;
-            top: 60%; 
+            top: 55%; /* Posisikan lebih ke bawah */
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
             max-width: 400px;
             opacity: 0;
-            animation: fadeIn 2s ease forwards 2s; 
+             /* Animation delay disesuaikan agar muncul setelah opening screen */
+            animation: fadeIn 2s ease forwards 5s; 
             z-index: 10;
         }
         
-        /* --- Desain Checklist (To-do List Style) --- */
+        /* --- 5. Desain Checklist (To-do List Style) --- */
         .choices {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-bottom: 25px;
+            margin-bottom: 35px; /* Tambah margin agar tidak berdempetan dengan tombol */
             padding: 10px;
             background: rgba(0, 0, 0, 0.2); 
             border-radius: 8px;
@@ -59,7 +85,7 @@
             display: flex;
             align-items: center;
             position: relative;
-            padding: 10px 15px 10px 40px;
+            padding: 12px 15px 12px 40px; /* Tambah padding vertikal */
             cursor: pointer;
             font-size: 1.1em;
             user-select: none;
@@ -92,11 +118,10 @@
             transition: 0.3s;
         }
 
-        /* IMPR. 1b: Feedback Visual Checklist */
         .checkbox-label input:checked ~ .checkmark {
             background-color: #ff0000;
             border: 2px solid white;
-            box-shadow: 0 0 10px rgba(0, 115, 186, 0.8); /* Cahaya Biru */
+            box-shadow: 0 0 10px rgba(0, 115, 186, 0.8);
         }
 
         .checkmark:after {
@@ -123,7 +148,7 @@
             border-bottom: none;
         }
         
-        /* --- 5. Tombol Utama --- */
+        /* --- 6. Tombol Utama --- */
         .official-btn {
             padding: 15px 30px;
             font-size: 1.3em;
@@ -138,11 +163,10 @@
             width: 100%;
         }
 
-        /* IMPR. 1c: Efek Hover Tombol Utama */
         .official-btn:hover:enabled {
             transform: scale(1.02);
             background: #ff3333;
-            border: 3px solid #001d5e; /* Border Biru Tua */
+            border: 3px solid #001d5e;
         }
 
         .official-btn:disabled {
@@ -152,7 +176,7 @@
             transform: translateY(4px);
         }
 
-        /* --- 6. Canvas & Pop-up --- */
+        /* --- 7. Canvas & Pop-up --- */
         canvas {
             position: absolute;
             top: 0;
@@ -187,11 +211,9 @@
             max-width: 350px;
             position: relative;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
-            /* IMPR. 1d: Animasi Pop-up yang Lebih Dramatis */
             animation: zoomIn 0.5s ease-out, webTension 0.4s ease-in-out; 
         }
 
-        /* IMPR. 1d: Efek getaran/tarikan jaring */
         @keyframes webTension {
             0% { transform: scale(1) rotate(0deg); }
             30% { transform: scale(1.05) rotate(3deg); }
@@ -205,7 +227,6 @@
             margin-top: 0;
         }
 
-        /* IMPR. 1a: Ikon Pop-up yang lebih menarik */
         .spidey-icon {
             font-size: 5em;
             margin: 10px 0;
@@ -236,6 +257,11 @@
     </style>
 </head>
 <body>
+    
+    <div id="openingScreen">
+        Halo cantikku, Angel 🕷️
+    </div>
+
     <canvas id="webCanvas"></canvas>
     
     <h1>
@@ -285,6 +311,26 @@
     </div>
 
     <script>
+        // --- LOGIKA OPENING SCREEN ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const openingScreen = document.getElementById('openingScreen');
+            
+            // Atur waktu tayang opening screen (2.5 detik)
+            const displayTime = 2500; 
+
+            setTimeout(() => {
+                // Hilangkan opening screen dengan transisi opacity
+                openingScreen.classList.add('disappear');
+                
+                // Hapus elemen setelah transisi selesai (1 detik)
+                setTimeout(() => {
+                    openingScreen.style.display = 'none';
+                }, 1000); 
+
+            }, displayTime);
+        });
+
+
         // --- CANVAS ANIMATION (Jaring) ---
         const canvas = document.getElementById("webCanvas");
         const ctx = canvas.getContext("2d");
