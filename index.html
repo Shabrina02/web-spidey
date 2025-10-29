@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web of Feelings 🕸️</title>
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at center, #ff0000, #001d5e);
+      overflow: hidden;
+      color: white;
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      height: 100vh;
+    }
+
+    h1 {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.7em;
+      width: 80%;
+      line-height: 1.5em;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards 1s;
+    }
+
+    button {
+      position: relative;
+      z-index: 5;
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      background: white;
+      color: #d10000;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background: #f5f5f5;
+    }
+
+    #btns {
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      animation: fadeIn 2s ease forwards 2s;
+    }
+
+    #message {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5em;
+      display: none;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="webCanvas"></canvas>
+
+  <h1>
+    Aku udah terjebak di jaring perasaanku sendiri...<br />
+    Boleh nggak aku jadi pacar kamu? 🕸️
+  </h1>
+
+  <div id="btns">
+    <button onclick="captureHeart('boleh')">Boleh ✅</button>
+    <button onclick="captureHeart('banget')">BOLEH BANGET 💖</button>
+  </div>
+
+  <div id="message">Terlambat... kamu udah kena jaring cintaku 🕸️❤️</div>
+
+  <audio id="thwipSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_2f5b3d802a.mp3" preload="auto"></audio>
+
+  <script>
+    // CANVAS ANIMATION (JARING)
+    const canvas = document.getElementById("webCanvas");
+    const ctx = canvas.getContext("2d");
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const points = [];
+    const spacing = 60;
+
+    for (let x = 0; x < width; x += spacing) {
+      for (let y = 0; y < height; y += spacing) {
+        points.push({
+          x: x + Math.random() * 5,
+          y: y + Math.random() * 5,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+        });
+      }
+    }
+
+    function drawWeb() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.strokeStyle = "rgba(255,255,255,0.25)";
+      ctx.lineWidth = 1;
+
+      points.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        for (let j = i + 1; j < points.length; j++) {
+          const p2 = points[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < spacing) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      });
+
+      requestAnimationFrame(drawWeb);
+    }
+
+    drawWeb();
+
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    // BUTTON ACTION
+    function captureHeart(choice) {
+      const sound = document.getElementById("thwipSound");
+      sound.play();
+      document.getElementById("btns").style.display = "none";
+      document.querySelector("h1").style.display = "none";
+      document.getElementById("message").style.display = "block";
+
+      let opacity = 0.25;
+      const interval = setInterval(() => {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+        opacity += 0.02;
+        if (opacity >= 1) {
+          clearInterval(interval);
+          // arahkan ke halaman kedua setelah 2 detik
+          setTimeout(() => {
+            window.location.href = "thanks.html";
+          }, 1500);
+        }
+      }, 50);
+    }
+  </script>
+</body>
+</html>
