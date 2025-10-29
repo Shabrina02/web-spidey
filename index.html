@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proposal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Marcellus&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">    
     <style>
         /* --- 1. CSS Dasar & Latar Belakang --- */
         body {
@@ -79,19 +77,17 @@
 
         /* --- 3. Posisi Judul (H1) - ROMANTIS & Jarak Diperlebar --- */
         h1 {
-            
             position: absolute;
-            top: 10%; 
+            top: 15%; /* Jarak lebih lega */
             left: 50%;
             transform: translateX(-50%);
             font-size: 1.7em;
-            width: 85%;
+            width: 80%;
             line-height: 1.5em;
             opacity: 0;
-            /* FONT ROMANTIS */
-            font-family: 'Cinzel Decorative', serif;
-            font-size: 2.5em;
-              color: #ff4d4d;
+            animation: fadeIn 2s ease forwards 11s; 
+            z-index: 10;
+        }
               text-shadow: 0 0 20px rgba(255,255,255,0.6);
               letter-spacing: 1px;
               animation: fadeIn 2s ease forwards 6s;
@@ -433,6 +429,7 @@
     </script>
 </body>
 </html>
+
 
 
 
