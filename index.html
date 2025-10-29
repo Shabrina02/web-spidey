@@ -4,19 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proposal Spidey</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* CSS milik Anda (Disesuaikan) */
+        body {
+            margin: 0;
+            /* Gradient Anda */
+            background: radial-gradient(circle at center, #ff0000, #001d5e); 
+            overflow: hidden;
+            color: white;
+            font-family: "Poppins", sans-serif;
+            text-align: center;
+            height: 100vh;
+        }
+
+        h1 {
+            position: absolute;
+            top: 25%; /* Disesuaikan agar ada ruang untuk checklist */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.7em;
+            width: 80%;
+            line-height: 1.5em;
+            opacity: 0;
+            animation: fadeIn 2s ease forwards 1s;
+            z-index: 10;
+        }
+        
+        /* Area Konten Utama */
+        #mainContent {
+            position: absolute;
+            top: 55%; /* Posisikan di tengah bawah */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            opacity: 0;
+            animation: fadeIn 2s ease forwards 2s;
+            z-index: 10;
+        }
+        
+        /* --- Checkbox / Checklist (Gabungan UI Kita) --- */
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 12px 15px 12px 45px;
+            cursor: pointer;
+            font-size: 1.1em;
+            user-select: none;
+            background-color: rgba(255, 255, 255, 0.1); /* Transparan */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            text-align: left;
+        }
+        
+        .checkbox-label:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .choice-checkbox {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+            border-radius: 5px;
+            border: 2px solid #ff0000; /* Merah Spidey */
+            transition: 0.3s;
+        }
+
+        .checkbox-label input:checked ~ .checkmark {
+            background-color: #ff0000; /* Merah menyala */
+            border: 2px solid white;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 9px;
+            top: 5px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-label input:checked ~ .checkmark:after {
+            display: block;
+        }
+        
+        .divider {
+            border: 0;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin: 5px 0;
+        }
+        
+        .select-all {
+            font-weight: 700;
+            background-color: rgba(0, 29, 94, 0.5); /* Biru tua transparan */
+            border: 1px solid #ff0000;
+        }
+        
+        /* --- Tombol Utama (OFFICIAL UR GF) --- */
+        .official-btn {
+            padding: 15px 30px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 10px;
+            background: #ff0000; /* Merah Menyala */
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px #a30000;
+            width: 100%;
+        }
+
+        .official-btn:hover:enabled {
+            transform: scale(1.02);
+            background: #ff3333;
+        }
+
+        .official-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: translateY(4px);
+        }
+
+        /* --- Pop-up (Menggantikan #message) --- */
+        .popup {
+            display: none; 
+            position: fixed;
+            z-index: 1000; /* Pastikan di atas semua elemen */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup.show {
+            display: flex;
+        }
+
+        .popup-content {
+            background-color: #1a1a2e;
+            padding: 40px;
+            border-radius: 15px;
+            border: 5px solid #ff0000;
+            width: 80%;
+            max-width: 350px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        .popup-content h2 {
+            color: #ffdd00; 
+            font-size: 1.8em;
+            margin-top: 0;
+        }
+
+        .popup-content p {
+            font-size: 1.2em;
+            margin-bottom: 0;
+        }
+        
+        /* --- Animasi Anda --- */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1; /* Di bawah konten utama */
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
+    <canvas id="webCanvas"></canvas>
+    
+    <h1>
+        Aku udah terjebak di jaring perasaanku sendiri...<br />
+        Boleh nggak aku jadi pacar kamu? 🕸️
+    </h1>
 
-    <div class="container">
-        <h1 class="spidey-text">boleh ga aku jadi pacar kamu?</h1>
-
+    <div id="mainContent">
         <div class="choices" id="choiceContainer">
-            <button class="choice-btn" data-value="boleh">boleh</button>
-            <button class="choice-btn" data-value="boleh banget">BOLEH BANGET</button>
-            <button class="choice-btn" data-value="ngomong langsung">boleh [ngomong langsung]</button>
-            <button class="choice-btn" data-value="benar semua">benar semua</button>
+            <label class="checkbox-label">
+                <input type="checkbox" class="choice-checkbox" data-value="boleh">
+                <span class="checkmark"></span>
+                boleh
+            </label>
+
+            <label class="checkbox-label">
+                <input type="checkbox" class="choice-checkbox" data-value="boleh banget">
+                <span class="checkmark"></span>
+                BOLEH BANGET
+            </label>
+
+            <label class="checkbox-label">
+                <input type="checkbox" class="choice-checkbox" data-value="ngomong langsung">
+                <span class="checkmark"></span>
+                boleh [ngomong langsung]
+            </label>
+            
+            <hr class="divider">
+
+            <label class="checkbox-label select-all">
+                <input type="checkbox" class="choice-checkbox" id="selectAll" data-value="benar semua">
+                <span class="checkmark"></span>
+                benar semua
+            </label>
         </div>
 
         <button id="officialBtn" class="official-btn" disabled>
@@ -26,15 +264,159 @@
 
     <div id="spideyPopup" class="popup">
         <div class="popup-content">
-            <span class="close-btn">&times;</span>
-            <div class="popup-icon">
-                <p>🕷️🕸️</p>
-                <h1>YES! Kamu Menerima Misinya!</h1>
-                <p>❤️ Selamat, sekarang **OFFICIAL UR GF**! ❤️</p>
-            </div>
-            </div>
+            <h2 class="spidey-text">YES! Target Terciduk!</h2>
+            <p>🕷️🕸️</p>
+            <p>❤️ Kamu Menerima Misinya! ❤️</p>
+            <p>Sekarang **OFFICIAL UR GF**!</p>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <audio id="thwipSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_2f5b3d802a.mp3" preload="auto"></audio>
+
+    <script>
+        // --- CANVAS ANIMATION (Jaring) ---
+        const canvas = document.getElementById("webCanvas");
+        const ctx = canvas.getContext("2d");
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+
+        const points = [];
+        const spacing = 60;
+        // Inisialisasi titik jaring (tetap sama)
+        for (let x = 0; x < width; x += spacing) {
+            for (let y = 0; y < height; y += spacing) {
+                points.push({
+                    x: x + Math.random() * 5,
+                    y: y + Math.random() * 5,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                });
+            }
+        }
+
+        function drawWeb() {
+            ctx.clearRect(0, 0, width, height);
+            // Ganti warna jaring menjadi lebih putih untuk kontras
+            ctx.strokeStyle = "rgba(255,255,255,0.2)"; 
+            ctx.lineWidth = 1;
+
+            points.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                for (let j = i + 1; j < points.length; j++) {
+                    const p2 = points[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < spacing) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            requestAnimationFrame(drawWeb);
+        }
+
+        drawWeb();
+
+        window.addEventListener("resize", () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // --- CHECKLIST & POPUP LOGIC ---
+        const choiceCheckboxes = document.querySelectorAll('.choice-checkbox:not(#selectAll)');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const officialButton = document.getElementById('officialBtn');
+        const spideyPopup = document.getElementById('spideyPopup');
+        const thwipSound = document.getElementById("thwipSound");
+        const mainContent = document.getElementById("mainContent");
+        const heading = document.querySelector("h1");
+
+
+        const checkSelections = () => {
+            let isAnyChoiceSelected = false;
+            choiceCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    isAnyChoiceSelected = true;
+                }
+            });
+            officialButton.disabled = !isAnyChoiceSelected;
+        };
+
+        // 1. Fungsionalitas 'Benar Semua'
+        selectAllCheckbox.addEventListener('change', function() {
+            const isChecked = this.checked;
+            choiceCheckboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+            checkSelections();
+        });
+
+        // 2. Fungsionalitas Opsi Biasa
+        choiceCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Uncheck 'benar semua' jika ada opsi biasa yang di-uncheck
+                if (!this.checked) {
+                    selectAllCheckbox.checked = false;
+                }
+                
+                // Check 'benar semua' jika semua opsi biasa di-check
+                let allChecked = true;
+                choiceCheckboxes.forEach(cb => {
+                    if (!cb.checked) {
+                        allChecked = false;
+                    }
+                });
+                if (allChecked) {
+                    selectAllCheckbox.checked = true;
+                }
+
+                checkSelections();
+            });
+        });
+
+        // 3. Fungsionalitas Tombol Resmi (Menggantikan captureHeart)
+        officialButton.addEventListener('click', () => {
+            if (officialButton.disabled) return;
+            
+            thwipSound.play();
+            
+            // Sembunyikan konten utama
+            mainContent.style.opacity = 0;
+            mainContent.style.pointerEvents = 'none';
+            heading.style.opacity = 0;
+
+            // Efek Jaring semakin jelas (CSS Anda)
+            let opacity = 0.2;
+            const interval = setInterval(() => {
+                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+                opacity += 0.05; // Lebih cepat
+                if (opacity >= 1) {
+                    clearInterval(interval);
+                    // Tampilkan Pop-up
+                    spideyPopup.classList.add('show');
+                }
+            }, 30);
+        });
+
+        // 4. Tutup pop-up (Opsional, tapi bagus untuk UX)
+        spideyPopup.addEventListener('click', (event) => {
+            // Tutup hanya jika mengklik di luar area konten pop-up
+            if (event.target === spideyPopup) {
+                spideyPopup.classList.remove('show');
+                // Atur ulang agar bisa dilihat lagi jika diperlukan, atau biarkan tertutup
+            }
+        });
+
+        checkSelections(); // Cek status awal
+    </script>
 </body>
 </html>
