@@ -17,65 +17,98 @@
             height: 100vh;
         }
 
-        /* --- 2. Opening Screen --- */
+        /* --- 2. Opening Screen (10 Detik) --- */
         #openingScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ff0000; /* Merah menyala Spiderman */
+            background: #ff0000;
             color: white;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 2.5em;
-            font-weight: 900;
-            z-index: 2000; /* Paling atas */
+            z-index: 2000;
             opacity: 1;
             transition: opacity 1s ease-out;
         }
+
+        .opening-text {
+            font-size: 2.5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            z-index: 2001;
+        }
+
+        /* Spiderman Menurun */
+        .spidey-swing {
+            width: 100px;
+            height: 100px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/90/Spiderman_icon.svg'); /* Free use icon placeholder */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: 
+                swingDown 3s ease-in-out 1s, /* Animasi turun */
+                swingSide 1.5s ease-in-out 1s infinite alternate; /* Animasi ayunan */
+            position: relative;
+            transform-origin: top center;
+            z-index: 2001;
+        }
+
+        @keyframes swingDown {
+            from { transform: translateY(-500px); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes swingSide {
+            from { transform: rotate(-5deg); }
+            to { transform: rotate(5deg); }
+        }
+
 
         .disappear {
             opacity: 0 !important;
             pointer-events: none;
         }
 
-        /* --- 3. Posisi Judul (H1) - Direvisi --- */
+        /* --- 3. Posisi Judul (H1) - Disesuaikan --- */
         h1 {
             position: absolute;
-            top: 15%; /* Posisikan lebih ke atas */
+            top: 20%; /* Sedikit lebih bawah dari sebelumnya */
             left: 50%;
             transform: translateX(-50%);
             font-size: 1.7em;
             width: 80%;
             line-height: 1.5em;
             opacity: 0;
-            /* Animation delay disesuaikan agar muncul setelah opening screen */
-            animation: fadeIn 2s ease forwards 4s; 
+            /* Muncul setelah opening (10s + 1s fade) */
+            animation: fadeIn 2s ease forwards 11s; 
             z-index: 10;
         }
         
-        /* --- 4. Posisi Konten Utama (Checklist & Tombol) - Direvisi --- */
+        /* --- 4. Posisi Konten Utama (Checklist & Tombol) - Disesuaikan --- */
         #mainContent {
             position: absolute;
-            top: 55%; /* Posisikan lebih ke bawah */
+            top: 60%; /* Posisikan di tengah bawah */
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
             max-width: 400px;
             opacity: 0;
-             /* Animation delay disesuaikan agar muncul setelah opening screen */
-            animation: fadeIn 2s ease forwards 5s; 
+             /* Muncul setelah judul (11s + 1s fade) */
+            animation: fadeIn 2s ease forwards 12s; 
             z-index: 10;
         }
         
-        /* --- 5. Desain Checklist (To-do List Style) --- */
+        /* --- 5. Desain Checklist (3 Pilihan) --- */
         .choices {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-bottom: 35px; /* Tambah margin agar tidak berdempetan dengan tombol */
+            gap: 12px; /* Lebih lebar karena isinya lebih sedikit */
+            margin-bottom: 35px;
             padding: 10px;
             background: rgba(0, 0, 0, 0.2); 
             border-radius: 8px;
@@ -85,7 +118,7 @@
             display: flex;
             align-items: center;
             position: relative;
-            padding: 12px 15px 12px 40px; /* Tambah padding vertikal */
+            padding: 12px 15px 12px 40px; 
             cursor: pointer;
             font-size: 1.1em;
             user-select: none;
@@ -95,10 +128,20 @@
             text-align: left;
         }
         
+        /* Hapus border-bottom pada elemen terakhir */
+        .choices .checkbox-label:last-child {
+            border-bottom: none;
+        }
+
         .checkbox-label:hover {
             background-color: rgba(255, 255, 255, 0.1); 
         }
         
+        /* Hapus styling select-all */
+        .select-all {
+            display: none !important; 
+        }
+
         .choice-checkbox {
             position: absolute;
             opacity: 0;
@@ -141,14 +184,7 @@
             display: block;
         }
         
-        .select-all {
-            font-weight: 700;
-            background-color: rgba(0, 29, 94, 0.4); 
-            border-top: 2px solid #ff0000; 
-            border-bottom: none;
-        }
-        
-        /* --- 6. Tombol Utama --- */
+        /* --- 6. Tombol Utama (OFFICIAL UR GF) --- */
         .official-btn {
             padding: 15px 30px;
             font-size: 1.3em;
@@ -259,7 +295,8 @@
 <body>
     
     <div id="openingScreen">
-        Halo cantikku, Angel 🕷️
+        <div class="opening-text">Halo cantikku, Angel 🕷️</div>
+        <div class="spidey-swing"></div> 
     </div>
 
     <canvas id="webCanvas"></canvas>
@@ -288,12 +325,6 @@
                 <span class="checkmark"></span>
                 boleh [ngomong langsung]
             </label>
-            
-            <label class="checkbox-label select-all">
-                <input type="checkbox" class="choice-checkbox" id="selectAll" data-value="benar semua">
-                <span class="checkmark"></span>
-                benar semua
-            </label>
         </div>
 
         <button id="officialBtn" class="official-btn" disabled>
@@ -315,8 +346,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             const openingScreen = document.getElementById('openingScreen');
             
-            // Atur waktu tayang opening screen (2.5 detik)
-            const displayTime = 2500; 
+            // Waktu tayang opening screen (10 detik)
+            const displayTime = 10000; 
 
             setTimeout(() => {
                 // Hilangkan opening screen dengan transisi opacity
@@ -386,9 +417,8 @@
             height = canvas.height = window.innerHeight;
         });
 
-        // --- CHECKLIST & POPUP LOGIC ---
-        const choiceCheckboxes = document.querySelectorAll('.choice-checkbox:not(#selectAll)');
-        const selectAllCheckbox = document.getElementById('selectAll');
+        // --- CHECKLIST & POPUP LOGIC (Disesuaikan untuk 3 Pilihan) ---
+        const choiceCheckboxes = document.querySelectorAll('.choice-checkbox');
         const officialButton = document.getElementById('officialBtn');
         const spideyPopup = document.getElementById('spideyPopup');
         const mainContent = document.getElementById("mainContent");
@@ -396,6 +426,7 @@
 
 
         const checkSelections = () => {
+            // Cek apakah setidaknya SATU dari 3 opsi sudah dicentang
             let isAnyChoiceSelected = false;
             choiceCheckboxes.forEach(checkbox => {
                 if (checkbox.checked) {
@@ -405,34 +436,9 @@
             officialButton.disabled = !isAnyChoiceSelected;
         };
 
-        // Logika 'Benar Semua'
-        selectAllCheckbox.addEventListener('change', function() {
-            const isChecked = this.checked;
-            choiceCheckboxes.forEach(checkbox => {
-                checkbox.checked = isChecked;
-            });
-            checkSelections();
-        });
-
-        // Logika Opsi Individu
+        // Logika Opsi Individu (Tidak ada lagi "Benar Semua")
         choiceCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                if (!this.checked) {
-                    selectAllCheckbox.checked = false;
-                }
-                
-                let allChecked = true;
-                choiceCheckboxes.forEach(cb => {
-                    if (!cb.checked) {
-                        allChecked = false;
-                    }
-                });
-                if (allChecked) {
-                    selectAllCheckbox.checked = true;
-                }
-
-                checkSelections();
-            });
+            checkbox.addEventListener('change', checkSelections);
         });
 
         // Fungsionalitas Tombol Resmi
