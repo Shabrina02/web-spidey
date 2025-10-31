@@ -3,428 +3,952 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proposal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+    <title>My Dearest Angel</title>
+    
+
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Merriweather:ital,wght@1,400;1,700&family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. CSS Dasar & Latar Belakang --- */
-        body {
-            margin: 0;
-            background: radial-gradient(circle at center, #ff0000, #001d5e); 
-            overflow: hidden;
-            color: white;
-            font-family: "Poppins", sans-serif;
-            text-align: center;
-            height: 100vh;
+        /* Global Reset for better responsiveness */
+        * {
+            box-sizing: border-box;
+        }
+        /* ==================== 1. CORE STYLES & VARIABLES ==================== */
+        :root {
+            --primary-color: #ff0000; /* Merah Spiderman */
+            --secondary-color: #001d5e; /* Biru Spiderman */
+            --text-light: white;
+            --transition-time: 0.8s;
+            --card-bg: rgba(255, 255, 255, 0.1);
         }
 
-        /* --- 2. Opening Screen (5 Detik) + Gradient --- */
-        #openingScreen {
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, var(--primary-color), var(--secondary-color)); 
+            color: var(--text-light);
+            font-family: "Poppins", sans-serif;
+            text-align: center;
+            min-height: 100vh;
+            position: relative; 
+            overflow-x: hidden; 
+        }
+
+        /* === Vignette Effect === */
+        body::after {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ff0000;
-            color: white;
+            pointer-events: none; 
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.7); 
+            z-index: 1000; 
+        }
+
+        /* === Canvas Jaring === */
+        #spiderCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* ==================== 2. UTILITIES & COMPONENTS ==================== */
+        .btn-base {
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 2001;
+            transition: background 0.3s, transform 0.1s, box-shadow 0.3s, color 0.3s, border-color 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* === Tombol Pembuka (Halo juga & Tap to Open) === */
+        .halo-btn, .open-btn {
+            padding: 15px 35px; 
+            font-size: 1.2em; 
+            background: linear-gradient(135deg, var(--text-light), #e0e0e0); 
+            color: var(--secondary-color); 
+            border: 2px solid var(--primary-color); 
+            box-shadow: 0 8px 30px rgba(255, 0, 0, 0.4); 
+            transition: all 0.3s ease;
+        }
+        .halo-btn:hover, .open-btn:hover { 
+            background: var(--primary-color); 
+            color: var(--text-light); 
+            border-color: var(--text-light);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.6); 
+            transform: translateY(-2px);
+        }
+        .halo-btn:active, .open-btn:active { transform: scale(0.98); }
+
+        /* === Send Button with new fade-in capability === */
+        #sendButton {
+            opacity: 0; /* Awalnya tersembunyi */
+            transition: opacity var(--transition-time) ease-out 0.5s;
+        }
+        #sendButton.visible {
+            opacity: 1; /* Muncul setelah delay */
+        }
+
+        .send-btn {
+            background: var(--primary-color); 
+            color: var(--text-light);
+            font-weight: 700;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .send-btn:disabled {
+            background: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 0, 0, 0.7);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .send-btn:not(:disabled):hover { 
+            background: var(--secondary-color); 
+            box-shadow: 0 8px 25px rgba(0, 29, 94, 0.9); 
+            transform: translateY(-2px);
+        }
+        .send-btn:not(:disabled):active { transform: scale(0.98); }
+
+
+        /* ==================== 3A. INITIAL SPLASH (NEW) ==================== */
+        #initialSplash {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #111; 
             display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 4000; 
+            transition: opacity 0.8s ease-out;
+            /* Padding dihapus untuk centering yang lebih baik */
+        }
+        .envelope-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid var(--primary-color);
+            border-radius: 15px;
+            padding: clamp(30px, 8vw, 60px);
+            max-width: 400px;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            animation: pulse 2s infinite alternate;
+            margin: 20px; /* Menambahkan margin untuk memastikan jarak aman di mobile */
+        }
+        @keyframes pulse {
+            from { transform: scale(1); box-shadow: 0 0 40px rgba(255, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2); }
+            to { transform: scale(1.03); box-shadow: 0 0 60px rgba(255, 0, 0, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.3); }
+        }
+        .spider-icon {
+            width: 70px;
+            height: 70px;
+            fill: var(--text-light);
+            margin-bottom: 0px;
+            animation: bounce-in 1s forwards;
+        }
+        @keyframes bounce-in {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .splash-title {
+            font-size: clamp(1.5em, 5vw, 2.5em);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 900;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.9);
+        }
+        .splash-subtitle {
+            font-size: clamp(0.9em, 3vw, 1.1em);
+            font-family: 'Merriweather', serif;
+            font-style: italic;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+
+        /* ==================== 3B. OPENING SCREEN (EXISTING) ==================== */
+        #openingScreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--primary-color);
+            display: none; 
+            opacity: 0; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
-            opacity: 1;
+            z-index: 3000;
             transition: opacity 1s ease-out;
+            gap: 20px;
         }
-        /* Gradient overlay di atas opening screen */
         #openingScreen::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.4) 100%);
-            z-index: 2000;
         }
-
         .opening-text {
-            font-size: 2.5em;
-            font-weight: 900;
-            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif; 
+            font-size: clamp(1.5em, 6vw, 3em); 
+            font-weight: 700; 
             z-index: 2001;
+            text-shadow: 
+                -1px -1px 0px var(--secondary-color), 
+                1px 1px 0px var(--secondary-color),
+                0 0 10px rgba(255,255,255,0.7);
+            position: relative;
+            animation: glitch-anim 2.5s infinite alternate linear; 
         }
-
-        /* --- GIF SPIDERMAN TURUN --- */
         .spidey-swing {
-            width: 150px; 
-            height: auto;
-            max-width: 80%;
-            margin: 20px 0;
-            z-index: 2001;
-            animation: dropDown 3s ease-out; 
+             width: clamp(100px, 30vw, 200px); 
+             height: auto;
+             z-index: 2001;
+             animation: swing 2s ease-in-out infinite alternate; 
+        }
+        @keyframes glitch-anim {
+            0% { transform: translate(0); text-shadow: -1px -1px 0 var(--secondary-color), 1px 1px 0 var(--primary-color); }
+            20% { transform: translate(-1px, 1px); text-shadow: -1px 1px 0 var(--secondary-color), 1px -1px 0 var(--primary-color); }
+            40% { transform: translate(-1px, -1px); text-shadow: 1px -1px 0 var(--secondary-color), -1px 1px 0 var(--primary-color); }
+            60% { transform: translate(1px, 1px); text-shadow: 1px 1px 0 var(--secondary-color), -1px -1px 0 var(--primary-color); }
+            80% { transform: translate(1px, -1px); text-shadow: -1px 1px 0 var(--primary-color), 1px -1px 0 var(--secondary-color); }
+            100% { transform: translate(0); text-shadow: -1px -1px 0 var(--secondary-color), 1px 1px 0 var(--primary-color); }
+        }
+        @keyframes swing {
+            from { transform: rotate(-5deg); }
+            to { transform: rotate(5deg); }
         }
 
-        @keyframes dropDown {
-            0% { transform: translateY(-300px); opacity: 0; }
-            30% { transform: translateY(0px); opacity: 1; }
-            70% { transform: translateY(0px); opacity: 1; }
-            100% { transform: translateY(0px); opacity: 1; }
-        }
 
-        .disappear {
-            opacity: 0 !important;
-            pointer-events: none;
-        }
-
-        /* --- 3. Posisi Judul (H1) - ROMANTIS & Jarak Diperlebar --- */
-        h1 {
-            position: absolute;
-            top: 15%; 
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.7em;
-            width: 85%;
-            line-height: 1.5em;
-            opacity: 0;
-            /* FONT ROMANTIS */
-            font-family: 'Playfair Display', serif; 
-            font-style: italic;
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            /* Waktu muncul: 5s + 1s fade = 6s */
-            animation: fadeIn 2s ease forwards 6s; 
-            z-index: 10;
-        }
-        
-        /* --- 4. Posisi Konten Utama (Checklist & Tombol) - Jarak Diperlebar --- */
+        /* ==================== 4. MAIN CONTENT (SCROLL-BASED) ==================== */
         #mainContent {
-            position: absolute;
-            top: 70%; 
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 400px;
-            opacity: 0;
-            /* Waktu muncul: 6s + 1s fade = 7s */
-            animation: fadeIn 2s ease forwards 7s; 
+            display: none;
+            width: 100%;
             z-index: 10;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
         }
-        
-        /* --- 5. Desain Checklist (3 Pilihan) --- */
-        .choices {
+
+        .scroll-section {
+            min-height: 80vh; 
+            width: 90%; 
+            max-width: 800px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 35px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2); 
-            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 50px;
+            padding: 20px 0; 
+        }
+        .scroll-section:first-of-type {
+            padding-top: 100px; 
         }
 
-        .checkbox-label {
+        /* === Styling Slide/Text === */
+        .slide-text {
+            font-family: 'Merriweather', serif; 
+            font-style: italic;
+            font-size: clamp(1.2em, 4vw, 1.8em);
+            padding: 20px;
+            box-sizing: border-box;
+            text-shadow: 1px 1px 7px rgba(0,0,0,0.9); 
+            line-height: 1.5; 
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity var(--transition-time) ease-out, transform var(--transition-time) ease-out;
+        }
+        .slide-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === Choices/Proposal Section Styling (Ini yang didelay) === */
+        .choices-container {
+            width: 100%;
+            max-width: 450px; 
+        }
+        .choices {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            opacity: 0; /* Awalnya 0 */
+            transition: opacity var(--transition-time) ease-out 0.5s;
+            pointer-events: none;
+            padding: 25px;
+            background: var(--card-bg); 
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px); 
+        }
+        .choices.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .choices label {
             display: flex;
             align-items: center;
-            position: relative;
-            padding: 12px 15px 12px 40px; 
+            gap: 15px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 1.1em;
-            user-select: none;
-            background-color: transparent; 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-            transition: background-color 0.3s;
             text-align: left;
+            padding: 12px 20px; 
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.15); 
+            transition: background 0.3s, border-color 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border-left: 5px solid transparent; 
+        }
+        .choices label:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: var(--primary-color); 
         }
         
-        .choices .checkbox-label:last-child {
-            border-bottom: none;
-        }
-
-        /* ... (CSS checklist lainnya sama) ... */
-        
-        /* --- 6. Tombol Utama ("Send proposal 💌") --- */
-        .official-btn {
-            padding: 15px 30px;
-            font-size: 1.3em;
-            border: none;
-            border-radius: 10px;
-            background: #ff0000;
-            color: white;
-            font-weight: 700;
+        .choices input[type="checkbox"] {
+            appearance: none;
+            width: 24px; 
+            height: 24px;
+            border: 2px solid var(--text-light);
+            border-radius: 5px;
+            position: relative;
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px #a30000;
-            width: 100%;
+            outline: none;
+            transition: border-color 0.3s, background-color 0.3s;
+            flex-shrink: 0; 
         }
 
-        .official-btn:hover:enabled {
-            transform: scale(1.02);
-            background: #ff3333;
-            border: 3px solid #001d5e;
+        .choices input[type="checkbox"]:checked {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
         }
 
-        .official-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: translateY(4px);
-        }
-
-        /* --- 7. Canvas & Pop-up --- */
-        canvas {
+        .choices input[type="checkbox"]:checked::after {
+            content: '✓';
             position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1; 
-            opacity: 0;
-            transition: opacity 1s; 
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px; 
+            color: var(--text-light);
+            font-weight: 900;
         }
 
-        .show-canvas {
-            opacity: 1 !important;
-        }
-        
+        /* ==================== 5. POPUP BASE STYLES ==================== */
         .popup {
-            display: none; 
+            display: none;
             position: fixed;
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); 
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(5px);
+            flex-direction: column;
+            z-index: 3000;
+            color: var(--text-light);
+            backdrop-filter: blur(8px); 
         }
-
-        .popup.show {
-            display: flex;
-        }
-
         .popup-content {
-            background-color: #1a1a2e;
-            padding: 40px;
-            border-radius: 15px;
-            border: 5px solid #ff0000;
-            width: 80%;
-            max-width: 350px;
-            position: relative;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
-            animation: zoomIn 0.5s ease-out, webTension 0.4s ease-in-out; 
+            background: linear-gradient(135deg, rgba(255,0,0,0.2), rgba(0,29,94,0.2)); 
+            border: 3px solid var(--primary-color); 
+            border-radius: 20px;
+            padding: 40px; 
+            text-align: center;
+            animation: pop 0.8s ease;
+            max-width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-
-        .popup-gif {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-
-        .popup-content h2 {
-            color: #ffdd00; 
-            font-size: 1.8em;
-            margin-top: 0;
-        }
-
-        .spidey-text-final {
-            color: white;
-            font-size: 1.1em;
-            font-family: "Poppins", sans-serif;
-        }
-
-        /* ... (keyframes sama) ... */
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+        @keyframes pop {
+            0% { transform: scale(0.7); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
         }
         
-        @keyframes zoomIn {
-            from {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+        /* === FINAL POPUP STYLING === */
+        .popup-gif {
+            width: 100%; 
+            max-width: 300px; 
+            height: auto;
+            margin: 25px 0;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.9), 0 0 20px rgba(0, 29, 94, 0.9); 
+            object-fit: contain; 
         }
+        
+        .spidey-text-final {
+            font-family: 'Poppins', sans-serif; 
+            font-size: clamp(1.8em, 6vw, 3em);
+            text-shadow: 
+                -1px -1px 0px var(--secondary-color),
+                1px 1px 0px var(--secondary-color),
+                0 0 10px rgba(255,255,255,0.5);
+            animation: glitch-anim 2s infinite alternate linear; 
+        }
+        .popup-content p {
+            font-family: 'Merriweather', serif;
+            font-size: clamp(1em, 3.5vw, 1.3em);
+            margin-top: 15px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }
+        .popup-content #dateText {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(0.8em, 2.5vw, 1em);
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* ==================== NEW LOADING BAR STYLES ==================== */
+        #loadingPopup .popup-content {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid var(--primary-color);
+            padding: 20px 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+            animation: pop 0.5s ease-out;
+        }
+
+        .loading-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #loadingSpider {
+            width: 50px;
+            height: 50px;
+            fill: var(--text-light);
+            margin-bottom: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        #progressBar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            transition: width 0.5s linear; /* PERBAIKAN: Durasi transisi akan diatur oleh JavaScript */
+            border-radius: 10px; /* PERBAIKAN: Diubah dari 10px 0 0 10px agar semua sudutnya tumpul */
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        #progressText {
+            margin-top: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
     </style>
 </head>
 <body>
+
     
-    <div id="openingScreen">
-        <div class="opening-text">Halo cantikku, Angel 🕷️</div>
-        <img src="kepala.gif" alt="Spider-Man Swinging" class="spidey-swing"> 
+
+<canvas id="spiderCanvas"></canvas>
+
+    <!-- 1. INITIAL SPLASH SCREEN (Letter/Envelope) -->
+    <div id="initialSplash">
+        <div class="envelope-card">
+            <!-- Spider SVG Icon -->
+            <svg class="spider-icon" fill="#000000" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 460 460" xml:space="preserve">
+<g>
+	<path d="M359.451,55.662c-17.117-17.733-37.112-31.592-59.43-41.19C277.694,4.869,254.135,0,230,0s-47.693,4.869-70.022,14.472
+		c-22.317,9.598-42.312,23.457-59.429,41.19C64.135,93.387,44.082,146.14,44.082,204.204c0,59.534,20.215,122.633,55.463,173.117
+		C136.229,429.865,183.779,460,230,460s93.771-30.135,130.455-82.678c35.247-50.485,55.463-113.583,55.463-173.117
+		C415.918,146.14,395.865,93.387,359.451,55.662z M344.057,365.873C311.166,412.982,269.594,440,230,440
+		c-39.594,0-81.166-27.018-114.057-74.127C83.469,319.36,64.082,258.923,64.082,204.204C64.082,84.559,149.567,20,230,20
+		c80.433,0,165.918,64.559,165.918,184.204C395.918,258.923,376.531,319.36,344.057,365.873z"/>
+	<path d="M218.818,250.821c-0.627-0.518-63.23-52.502-108.156-109.685c-2.384-3.035-6.301-4.427-10.068-3.576
+		c-3.765,0.851-6.704,3.792-7.551,7.558c-6.729,29.899-5.932,64.043,2.188,93.677c10.46,38.171,32.418,66.797,63.502,82.784
+		c1.449,0.745,3.016,1.107,4.571,1.107c2.589,0,5.145-1.005,7.065-2.921c1.34-1.337,33.021-33.003,50.011-55.15
+		C223.656,260.346,222.966,254.25,218.818,250.821z M161.546,300.233c-45.331-27.746-56.097-85.693-52.268-129.264
+		c34.499,40.377,73.232,75.035,89.286,88.892C186.34,274.566,169.878,291.713,161.546,300.233z"/>
+	<path d="M366.957,145.118c-0.848-3.766-3.786-6.707-7.552-7.558c-3.767-0.851-7.684,0.541-10.067,3.576
+		c-44.881,57.127-107.528,109.167-108.156,109.686c-4.146,3.429-4.837,9.524-1.563,13.793c16.99,22.147,48.67,53.813,50.011,55.15
+		c1.92,1.916,4.476,2.921,7.065,2.921c1.555,0,3.122-0.362,4.57-1.107c31.084-15.987,53.043-44.614,63.503-82.784
+		C372.889,209.162,373.687,175.018,366.957,145.118z M298.453,300.234c-8.329-8.518-24.79-25.663-37.017-40.373
+		c16.05-13.854,54.783-48.511,89.285-88.891C354.55,214.541,343.784,272.488,298.453,300.234z"/>
+</g>
+</svg>
+
+            <p class="splash-title">Pesan Rahasia dari Seseorang di Sebelahmu</p>
+            <p class="splash-subtitle">Tap untuk membaca surat yang ditulis dengan rasa sayang.</p>
+            <button class="open-btn btn-base" onclick="openEnvelope()">Tap to Open 🕸️</button>
+        </div>
     </div>
 
-    <canvas id="webCanvas"></canvas>
-    
-    <h1>
-        Kita nih nggak cocok temenan deh tapi kamu jangan punya pacar dulu plis kalo pacarnya aku gapapa sih....<br />
-        **Jadi, boleh nggak aku jadi pacar kamu? 🕸️**
-    </h1>
+   <!-- 2. OPENING SCREEN (Second step) -->
+    <div id="openingScreen">
+        <div class="opening-text">Halo my dearest, Angel ♡</div>
+        <img src="kepala.gif" alt="Spider-Man Swinging" class="spidey-swing"> 
+        <button class="halo-btn btn-base" onclick="startMain()">Halo, Shab</button>
+    </div>
 
+
+ <!-- 3. MAIN CONTENT (The Proposal Slides) -->
     <div id="mainContent">
-        <div class="choices" id="choiceContainer">
-            <label class="checkbox-label">
-                <input type="checkbox" class="choice-checkbox" data-value="boleh">
-                <span class="checkmark"></span>
-                boleh
-            </label>
 
-            <label class="checkbox-label">
-                <input type="checkbox" class="choice-checkbox" data-value="boleh banget">
-                <span class="checkmark"></span>
-                BOLEH BANGET
-            </label>
+	 <div class="scroll-section">
+            <div class="slide-text">katanya kalau deg-degan pas nulis sesuatu, artinya yang ditulis emang spesial. dan iya… ini tentang kamu.</div>
+        </div> 
 
-            <label class="checkbox-label">
-                <input type="checkbox" class="choice-checkbox" data-value="ngomong langsung">
-                <span class="checkmark"></span>
-                boleh [ngomong langsung]
-            </label>
+        <div class="scroll-section">
+            <div class="slide-text">
+                Kamu tau gaa.....
+            </div>
+        </div>
+        
+	 <div class="scroll-section">
+            <div class="slide-text">Waktu pertama kali namamu menyapa, ada sesuatu yang terasa beda.. Nggak bahaya, cuma bikin hidup lebih hidup.</div>
         </div>
 
-        <button id="officialBtn" class="official-btn" disabled>
-            Send proposal 💌
-        </button>
+        <div class="scroll-section">
+            <div class="slide-text">Perasaan dan energi nggak pernah bohong. Aku nggak bisa terus pura-pura bahwa kita cukup tanpa arah dan cuma 'jalani aja dulu'..</div>
+        </div>
+        
+        <div class="scroll-section">
+            <div class="slide-text">There's a feeling that says — this could be something real. </div>
+        </div>
+	
+	<div class="scroll-section">
+            <div class="slide-text">Hati kecilku sih maunya kamu jangan punya pacar dulu. 
+		<br><span style="font-size: 0.75em; opacity: 0.8; font-style: normal;">kalau pacarnya aku gapapa sih.</span></div>
+        </div>
+
+
+	<div class="scroll-section">
+            <div class="slide-text">Jadi kalau gitu........</div>
+        </div>
+        
+<div class="scroll-section proposal-question-section">
+            <div class="slide-text" style="font-style: normal; font-weight: 700; font-size: clamp(1.4em, 5vw, 2em);">
+                Boleh ngga aku jadi pacar resmi kamu, the one and only milikmu? 👉👈
+            </div>
+            
+<div class="choices-container">
+                <div class="choices">
+                    <label><input type="checkbox" name="proposalChoice"> Iya, boleh 🙀</label>
+                    <label><input type="checkbox" name="proposalChoice"> BOLEH BANGET!!!</label>
+                    <label><input type="checkbox" name="proposalChoice"> mau ngomong langsung</label>
+                </div>
+                
+              
+<button id="sendButton" class="send-btn btn-base" disabled>Send Proposal 💌</button>
+            </div>
+        </div>
+        
+        
+
+<div style="height: 20vh;"></div>
     </div>
 
-    <div id="spideyPopup" class="popup">
+    <!-- 4. NEW: COMMITMENT AGREEMENT POPUP -->
+    <div id="agreementPopup" class="popup" style="z-index: 3100;">
+        <div class="popup-content" style="max-width: 550px; padding: 50px 30px; border-color: #fff; background: rgba(0, 0, 0, 0.8); box-shadow: 0 0 50px rgba(255, 255, 255, 0.4);">
+            <h2 style="font-size: clamp(1.6em, 5vw, 2.5em); color: var(--primary-color); margin-bottom: 20px;">
+                Commitment Check ✅
+            </h2>
+            <p style="font-style: normal; font-size: clamp(1em, 3vw, 1.1em); margin-bottom: 30px; line-height: 1.4; color: var(--text-light); opacity: 0.9;">
+            Kamu yakin mau jalanin ini bareng aku? Bukan cuma buat masa indahnya, tapi juga buat segala hal yang datang nanti:
+            </p>
+            <ul style="list-style: none; padding: 0; text-align: left; width: 100%; max-width: 350px; margin: 0 auto 30px auto; font-size: clamp(1em, 3vw, 1.2em);">
+                <li style="margin-bottom: 10px; border-bottom: 1px dashed rgba(255, 255, 255, 0.2); padding-bottom: 5px; color: #f0f0f0;">🕸️ Masa Susah dan Senang</li>
+                <li style="margin-bottom: 10px; border-bottom: 1px dashed rgba(255, 255, 255, 0.2); padding-bottom: 5px; color: #f0f0f0;">🤕 Masa Sakit dan Kelelahan</li>
+                <li style="margin-bottom: 10px; border-bottom: 1px dashed rgba(255, 255, 255, 0.2); padding-bottom: 5px; color: #f0f0f0;">😤 Masa Bosen dan Debat Kecil</li>
+                <li style="margin-bottom: 10px; padding-bottom: 5px; color: #f0f0f0;">🌱 Terus <b>Grow Up</b>, Saling Merawat dan Mencintai?</li>
+            </ul>
+            <button id="agreeBtn" class="btn-base send-btn" onclick="agreeToCommitment()" style="background: #28a745; margin-top: 0; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.5);">
+                Aku sih YAY! Submit My Heart ❤️
+            </button>
+            <button id="cancelBtn" class="btn-base" onclick="closeAgreement()" style="background: transparent; color: rgba(255, 255, 255, 0.7); margin-top: 10px; box-shadow: none; font-size: 0.9em; text-transform: none;">
+                Tahan dulu, kasih aku waktu hmmm 10 jam (Cancel)
+            </button>
+        </div>
+    </div>
+
+    <!-- 5. NEW: LOADING POPUP (PROGRESS BAR) -->
+    <div id="loadingPopup" class="popup" style="z-index: 3200;">
         <div class="popup-content">
-            <h2 class="spidey-text-final">YEAH!</h2>
-            <img src="https://i.pinimg.com/originals/b9/6c/17/b96c17ba00f340b14260183b0502d89b.gif" alt="Spider-Man Proposal Success" class="popup-gif">
-            <p class="spidey-text-final">It’s official — You’re mine now (and I’m yours 😳)</p>
+            <div class="loading-container">
+                <!-- Loading Spider SVG -->
+                <svg id="loadingSpider" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 512.003 512.003" xml:space="preserve">
+<path style="fill:#EEE5DD;" d="M503.117,256c-71.133-25.296-104.79-106.55-72.379-174.736l0,0l0,0
+	c-68.186,32.411-149.44-1.245-174.736-72.378l0,0l0,0C230.706,80.019,149.452,113.675,81.266,81.264l0,0l0,0
+	C113.677,149.45,80.021,230.704,8.888,256l0,0l0,0c71.133,25.296,104.79,106.55,72.378,174.736l0,0l0,0
+	c68.186-32.411,149.44,1.245,174.736,72.378l0,0l0,0c25.296-71.133,106.55-104.79,174.736-72.378l0,0l0,0
+	C398.327,362.551,431.983,281.296,503.117,256L503.117,256L503.117,256z"/>
+<g>
+	<path style="opacity:0.3;fill:#20272E;enable-background:new    ;" d="M430.738,81.264L430.738,81.264L430.738,81.264
+		c-68.186,32.411-149.44-1.245-174.736-72.378v494.229c25.296-71.133,106.55-104.79,174.736-72.378l0,0l0,0
+		c-32.411-68.186,1.245-149.44,72.379-174.736l0,0C431.983,230.704,398.327,149.45,430.738,81.264z"/>
+	<path style="fill:#20272E;" d="M511.906,254.752c-0.474-3.153-2.676-5.958-5.706-7.082c-0.037-0.013-0.068-0.033-0.104-0.046
+		c-31.539-11.216-56.974-35.384-69.783-66.309c-12.81-30.926-11.915-66.002,2.455-96.235c0.014-0.031,0.021-0.063,0.036-0.095
+		c1.593-3.453,0.718-7.762-2.109-10.316c-2.581-2.332-6.508-2.926-9.664-1.478c-0.037,0.017-0.075,0.025-0.11,0.043
+		c-16.085,7.646-33.172,11.524-50.786,11.525c-50.072,0.001-94.984-31.686-111.757-78.85c-0.012-0.034-0.031-0.063-0.044-0.097
+		c-1.304-3.533-4.899-5.947-8.669-5.805c-3.526,0.133-6.777,2.5-7.998,5.805c-0.012,0.033-0.031,0.063-0.044,0.097
+		c-16.771,47.16-61.682,78.848-111.757,78.851c-17.609,0.001-34.696-3.878-50.786-11.525c-0.034-0.017-0.071-0.025-0.107-0.04
+		c-3.365-1.546-7.529-0.771-10.105,1.9c-2.495,2.587-3.175,6.617-1.677,9.878c0.017,0.036,0.025,0.073,0.041,0.109
+		c14.371,30.232,15.266,65.308,2.456,96.234c-12.81,30.925-38.244,55.095-69.783,66.31c-0.037,0.013-0.069,0.033-0.104,0.046
+		c-3.511,1.3-5.911,4.847-5.798,8.597c0.107,3.554,2.468,6.829,5.798,8.063c0.037,0.013,0.069,0.034,0.106,0.047
+		c31.539,11.216,56.974,35.386,69.784,66.31c12.81,30.926,11.914,66.001-2.456,96.232c-0.015,0.033-0.024,0.069-0.039,0.102
+		c-1.5,3.259-0.823,7.294,1.67,9.881c2.577,2.673,6.744,3.451,10.112,1.903c0.034-0.015,0.07-0.024,0.103-0.039
+		c16.087-7.646,33.172-11.524,50.785-11.524c50.073,0,94.985,31.687,111.757,78.851c0.013,0.036,0.033,0.068,0.046,0.102
+		c1.226,3.314,4.48,5.674,8.017,5.799c3.765,0.133,7.34-2.272,8.645-5.799c0.013-0.036,0.033-0.066,0.046-0.102
+		c16.772-47.163,61.685-78.851,111.758-78.851c17.611,0,34.698,3.878,50.785,11.524c0.036,0.017,0.072,0.025,0.108,0.042
+		c3.23,1.484,7.237,0.83,9.821-1.621c2.714-2.571,3.517-6.784,1.954-10.174c-0.014-0.031-0.021-0.064-0.036-0.095
+		c-14.37-30.231-15.265-65.308-2.455-96.232c12.81-30.926,38.245-55.095,69.784-66.31c0.037-0.013,0.069-0.033,0.105-0.047
+		c3.262-1.209,5.614-4.402,5.79-7.881C512.02,255.878,511.99,255.31,511.906,254.752z M92.12,188.119
+		c9.898-23.895,12.669-49.943,8.417-75.009l43.229,43.229c-1.888,16.537-6.03,32.683-12.391,48.04
+		c-6.36,15.355-14.847,29.7-25.207,42.732H45.032C65.764,232.391,82.222,212.013,92.12,188.119z M187.056,227.44
+		c-2.763,6.671-5.87,13.259-9.236,19.67h-49.542c7.734-11.262,14.287-23.281,19.524-35.927c5.238-12.646,9.104-25.779,11.598-39.21
+		l35.031,35.031C192.281,213.914,189.82,220.77,187.056,227.44z M194.432,304.996l-35.031,35.031
+		c-2.494-13.431-6.36-26.564-11.598-39.209c-5.237-12.646-11.789-24.666-19.523-35.927h49.542
+		c3.365,6.407,6.473,12.996,9.236,19.668C189.82,291.234,192.282,298.089,194.432,304.996z M92.12,323.882
+		c-9.897-23.894-26.356-44.272-47.087-58.991h61.134c10.36,13.029,18.846,27.374,25.207,42.732
+		c6.361,15.359,10.504,31.502,12.392,48.039l-43.229,43.23C104.789,373.824,102.018,347.777,92.12,323.882z M247.111,466.983
+		c-25.162-35.403-66.396-57.522-111.244-57.522c-7.658,0-15.224,0.658-22.675,1.923l43.197-43.197
+		c33.219,3.838,64.417,16.807,90.722,37.713V466.983z M247.111,383.782c-22.668-15.595-48.143-26.184-75.099-31.218l35.021-35.021
+		c13.82,4.31,27.258,9.895,40.079,16.653V383.782z M197.717,247.11c2.038-4.244,3.975-8.538,5.767-12.866
+		c1.792-4.327,3.458-8.731,5.018-13.17l26.036,26.036H197.717z M234.537,264.892l-26.035,26.035
+		c-1.559-4.44-3.226-8.842-5.018-13.173c-1.792-4.327-3.728-8.619-5.766-12.863h36.819V264.892z M247.111,314.286
+		c-8.466-4.077-17.156-7.686-26.013-10.807l26.013-26.013V314.286z M247.111,234.535l-26.013-26.013
+		c8.858-3.12,17.546-6.73,26.013-10.807V234.535z M247.111,177.804c-12.822,6.758-26.26,12.342-40.079,16.652l-35.019-35.019
+		c26.955-5.033,52.43-15.623,75.098-31.219V177.804z M247.111,106.1c-26.306,20.905-57.504,33.875-90.721,37.714l-43.195-43.195
+		c7.452,1.265,15.017,1.923,22.675,1.923c44.848-0.004,86.08-22.122,111.241-57.523V106.1z M264.893,45.019
+		c25.162,35.403,66.396,57.524,111.243,57.523c7.658,0,15.225-0.659,22.676-1.924l-43.198,43.198
+		c-33.216-3.837-64.414-16.806-90.722-37.713V45.019H264.893z M334.185,247.11c-3.365-6.409-6.473-12.997-9.236-19.668
+		c-2.766-6.678-5.228-13.534-7.376-20.438l35.031-35.031c2.494,13.431,6.36,26.564,11.598,39.21
+		c5.237,12.645,11.789,24.664,19.523,35.927H334.185z M383.726,264.892c-7.734,11.262-14.286,23.281-19.523,35.927
+		c-5.239,12.646-9.104,25.779-11.598,39.209l-35.031-35.031c2.15-6.909,4.611-13.764,7.375-20.435
+		c2.766-6.674,5.873-13.264,9.237-19.67L383.726,264.892L383.726,264.892z M264.893,128.219
+		c22.669,15.596,48.145,26.185,75.099,31.218l-35.019,35.019c-13.819-4.309-27.257-9.893-40.079-16.652v-49.585H264.893z
+		 M277.467,247.11l26.036-26.036c1.559,4.44,3.224,8.843,5.018,13.173c1.792,4.327,3.728,8.619,5.766,12.863H277.467z
+		 M314.287,264.892c-2.038,4.243-3.974,8.535-5.767,12.866c-1.792,4.327-3.458,8.73-5.017,13.169l-26.035-26.035H314.287
+		L314.287,264.892z M264.893,197.716c8.468,4.077,17.156,7.686,26.013,10.807l-26.013,26.013V197.716z M264.893,277.465
+		l26.015,26.015c-8.859,3.12-17.548,6.73-26.015,10.807V277.465z M264.893,334.197c12.821-6.758,26.26-12.342,40.08-16.652
+		l35.021,35.021c-26.956,5.033-52.431,15.622-75.101,31.218V334.197L264.893,334.197z M376.137,409.461
+		c-44.848,0-86.083,22.118-111.244,57.522V405.9c26.306-20.905,57.505-33.874,90.724-37.713l43.197,43.197
+		C391.36,410.119,383.795,409.461,376.137,409.461z M419.884,323.882c-9.897,23.895-12.668,49.941-8.417,75.008l-43.227-43.227
+		c1.888-16.537,6.03-32.68,12.392-48.039c6.361-15.357,14.848-29.703,25.207-42.732h61.134
+		C446.242,279.611,429.782,299.988,419.884,323.882z M405.838,247.11c-10.36-13.032-18.847-27.377-25.206-42.732
+		c-6.361-15.357-10.504-31.503-12.392-48.04l43.229-43.229c-4.251,25.067-1.481,51.114,8.418,75.01
+		c9.897,23.894,26.357,44.271,47.087,58.99H405.838z"/>
+</g>
+</svg>
+                <p style="margin-top: 5px; font-size: 1.1em; color: white;">DAG-DIG-DUG DUARR...</p>
+                <div class="progress-bar-container">
+                    <div id="progressBar"></div>
+                </div>
+                <p id="progressText">0% Complete</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 6. FINAL SUCCESS POPUP (Existing) -->
+    <div id="spideyPopup" class="popup" style="z-index: 3000;">
+        <div class="popup-content">
+            <h2 class="spidey-text-final">YAAAAAAAYY!</h2>
+            <img src="love.gif" alt="Spider-Man Love" class="popup-gif" onerror="this.onerror=null; this.src='https://placehold.co/250x250/ff0000/001d5e?text=SUCCESS'">
+            <p class="spidey-text-final">It’s official — You’re mine and I’m yours 😳</p>
+            <p id="dateText" style="font-size: 0.9em; opacity: 0.7;"></p>
         </div>
     </div>
 
     <script>
-        // --- LOGIKA OPENING SCREEN DAN CANVAS ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const openingScreen = document.getElementById('openingScreen');
-            const webCanvas = document.getElementById('webCanvas');
+        (() => {
+            /* ==================== CANVAS JARING (DYNAMIC & INTERACTIVE) ==================== */
+            const canvas = document.getElementById('spiderCanvas');
+            const ctx = canvas.getContext('2d');
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            let mouse = { x: width / 2, y: height / 2 };
             
-            // Waktu tayang opening screen (5 detik)
-            const displayTime = 5000; 
-
-            setTimeout(() => {
-                // 1. Hilangkan opening screen
-                openingScreen.classList.add('disappear');
-                
-                // 2. Tampilkan canvas di latar belakang
-                webCanvas.classList.add('show-canvas');
-
-                // Hapus elemen setelah transisi selesai (1 detik)
-                setTimeout(() => {
-                    openingScreen.style.display = 'none';
-                }, 1000); 
-
-            }, displayTime);
-        });
-
-
-        // --- CANVAS ANIMATION (Jaring) ---
-        const canvas = document.getElementById("webCanvas");
-        const ctx = canvas.getContext("2d");
-        let width = (canvas.width = window.innerWidth);
-        let height = (canvas.height = window.innerHeight);
-
-        const points = [];
-        const spacing = 60;
-        for (let x = 0; x < width; x += spacing) {
-            for (let y = 0; y < height; y += spacing) {
-                points.push({
-                    x: x + Math.random() * 5,
-                    y: y + Math.random() * 5,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
-                });
+            function createPoints(w, h) {
+                return Array(40).fill().map(() => ({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.4, 
+                    vy: (Math.random() - 0.5) * 0.4
+                }));
             }
-        }
 
-        function drawWeb() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.strokeStyle = "rgba(255,255,255,0.2)"; 
-            ctx.lineWidth = 1;
+            let points = createPoints(width, height);
 
-            points.forEach((p, i) => {
-                p.x += p.vx;
-                p.y += p.vy;
+            window.addEventListener('resize', () => {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                points = createPoints(width, height);
+            });
 
-                if (p.x < 0 || p.x > width) p.vx *= -1;
-                if (p.y < 0 || p.y > height) p.vy *= -1;
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
 
-                for (let j = i + 1; j < points.length; j++) {
-                    const p2 = points[j];
-                    const dx = p.x - p2.x;
-                    const dy = p.y - p2.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < spacing) {
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.stroke();
+            function drawWeb() {
+                ctx.clearRect(0, 0, width, height);
+                const noiseFactor = 0.08; 
+                const maxSpeed = 1.2; 
+                const mouseRepulsionForce = 0.8; 
+                const mouseRepulsionRadius = 150; 
+
+                for (let i = 0; i < points.length; i++) {
+                    const p1 = points[i];
+
+                    // 1. Gerakan Otomatis (noise)
+                    p1.x += p1.vx;
+                    p1.y += p1.vy;
+                    p1.vx += (Math.random() - 0.5) * noiseFactor; 
+                    p1.vy += (Math.random() - 0.5) * noiseFactor;
+
+                    // 2. Mouse Repulsion
+                    const distToMouse = Math.hypot(p1.x - mouse.x, p1.y - mouse.y);
+                    
+                    if (distToMouse < mouseRepulsionRadius) {
+                        const angle = Math.atan2(p1.y - mouse.y, p1.x - mouse.x);
+                        const pushFactor = (1 - distToMouse / mouseRepulsionRadius) * mouseRepulsionForce; 
+                        p1.vx += Math.cos(angle) * pushFactor;
+                        p1.vy += Math.sin(angle) * pushFactor;
+                    }
+
+                    // 3. Damping & Batas Kecepatan
+                    p1.vx *= 0.97; 
+                    p1.vy *= 0.97;
+
+                    const speed = Math.hypot(p1.vx, p1.vy);
+                    if (speed > maxSpeed) {
+                        p1.vx = (p1.vx / speed) * maxSpeed;
+                        p1.vy = (p1.vy / speed) * maxSpeed;
+                    }
+
+                    // 4. Batas Layar (Bounce)
+                    if (p1.x < 0) { p1.x = 0; p1.vx *= -1; }
+                    if (p1.x > width) { p1.x = width; p1.vx *= -1; }
+                    if (p1.y < 0) { p1.y = 0; p1.vy *= -1; }
+                    if (p1.y > height) { p1.y = height; p1.vy *= -1; }
+                    
+                    // 5. Menggambar garis (menghubungkan titik-titik)
+                    for (let j = i + 1; j < points.length; j++) {
+                        const p2 = points[j];
+                        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+                        const connectionDistance = 180; 
+                        
+                        if (dist < connectionDistance) {
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / connectionDistance})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
                     }
                 }
-            });
-
-            requestAnimationFrame(drawWeb);
-        }
-
-        drawWeb();
-
-        window.addEventListener("resize", () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        });
-
-        // --- CHECKLIST & POPUP LOGIC ---
-        const choiceCheckboxes = document.querySelectorAll('.choice-checkbox');
-        const officialButton = document.getElementById('officialBtn');
-        const spideyPopup = document.getElementById('spideyPopup');
-        const mainContent = document.getElementById("mainContent");
-        const heading = document.querySelector("h1");
-
-
-        const checkSelections = () => {
-            let isAnyChoiceSelected = false;
-            choiceCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    isAnyChoiceSelected = true;
-                }
-            });
-            officialButton.disabled = !isAnyChoiceSelected;
-        };
-
-        choiceCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', checkSelections);
-        });
-
-        officialButton.addEventListener('click', () => {
-            if (officialButton.disabled) return;
-            
-            mainContent.style.opacity = 0;
-            mainContent.style.pointerEvents = 'none';
-            heading.style.opacity = 0;
-
-            let opacity = 0.2;
-            const interval = setInterval(() => {
-                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-                opacity += 0.05; 
-                if (opacity >= 1) {
-                    clearInterval(interval);
-                    spideyPopup.classList.add('show');
-                }
-            }, 30);
-        });
-
-        spideyPopup.addEventListener('click', (event) => {
-            if (event.target === spideyPopup) {
-                spideyPopup.classList.remove('show');
+                requestAnimationFrame(drawWeb);
             }
-        });
+            drawWeb();
 
-        checkSelections(); 
+
+            /* ==================== LOGIKA UTAMA 3-STEP FLOW & DELAY ==================== */
+            const initialSplash = document.getElementById('initialSplash');
+            const opening = document.getElementById('openingScreen');
+            const mainContent = document.getElementById('mainContent');
+            const checkboxes = document.querySelectorAll('.choices input[type="checkbox"]');
+            const sendBtn = document.getElementById('sendButton');
+            const agreementPopup = document.getElementById('agreementPopup'); 
+            const loadingPopup = document.getElementById('loadingPopup');       
+            const finalPopup = document.getElementById('spideyPopup');           
+            const dateText = document.getElementById('dateText');
+            
+            // Elemen loading bar baru
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            // Elemen spesifik untuk proposal delay
+            const proposalQuestionSection = document.querySelector('.proposal-question-section');
+            const proposalText = proposalQuestionSection.querySelector('.slide-text');
+            const choices = proposalQuestionSection.querySelector('.choices');
+            
+            // Kumpulkan semua slide teks (tidak termasuk choices dan button)
+            const allSlideTexts = document.querySelectorAll('.scroll-section .slide-text'); 
+
+
+            // STEP 1: INITIAL SPLASH -> OPENING SCREEN
+            window.openEnvelope = function() {
+                initialSplash.style.opacity = 0;
+                setTimeout(() => {
+                    initialSplash.style.display = 'none';
+                    opening.style.display = 'flex'; 
+                    setTimeout(() => {
+                        opening.style.opacity = 1; // Fade in opening screen
+                    }, 50);
+                }, 800);
+            };
+
+            // STEP 2: OPENING SCREEN -> MAIN CONTENT (Scroll Proposal)
+            window.startMain = function() {
+                opening.style.opacity = 0;
+                setTimeout(() => {
+                    opening.style.display = 'none';
+                    mainContent.style.display = 'flex'; 
+                    setTimeout(() => {
+                         window.scrollTo(0, 0); 
+                    }, 50);
+                }, 1000);
+            };
+
+            const observerOptions = {
+                root: null, 
+                rootMargin: '0px',
+                threshold: 0.6 
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        
+                        // LOGIKA DELAY: Jika elemen yang muncul adalah teks pertanyaan proposal
+                        if (entry.target === proposalText && !choices.classList.contains('visible')) {
+                            // Delay 1 detik sebelum choices dan tombol muncul
+                            setTimeout(() => {
+                                choices.classList.add('visible');
+                                sendBtn.classList.add('visible'); 
+                            }, 1000); 
+                        }
+                    } else {
+                         if (entry.boundingClientRect.top > window.innerHeight || entry.boundingClientRect.bottom < 0) {
+                             entry.target.classList.remove('visible'); 
+                             
+                             // Jika scroll balik, sembunyikan choices dan tombol juga
+                             if (entry.target === proposalText) {
+                                choices.classList.remove('visible');
+                                sendBtn.classList.remove('visible');
+                             }
+                         }
+                    }
+                });
+            }, observerOptions);
+            
+            // Hanya observasi elemen teks slide
+            allSlideTexts.forEach(el => observer.observe(el));
+            
+            function checkAllCheckboxes() {
+                let allChecked = true;
+                checkboxes.forEach(cb => {
+                    if (!cb.checked) {
+                        allChecked = false;
+                    }
+                });
+                sendBtn.disabled = !allChecked;
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', checkAllCheckboxes);
+            });
+            
+            // ************ LOGIKA BARU ************
+            
+            // 1. Saat tombol SEND PROPOSAL diklik, tampilkan AGREEMENT POPUP
+            sendBtn.addEventListener('click', () => {
+                agreementPopup.style.display = 'flex';
+            });
+            
+            // Fungsi untuk mengupdate progress bar
+            function startProgressBar(duration, callback) {
+                progressBar.style.width = '0%';
+                progressText.textContent = '0% Complete';
+                
+                // ******** PERBAIKAN DI SINI ********
+                // Atur durasi transisi CSS agar SAMA dengan durasi logika JavaScript
+                progressBar.style.transitionDuration = `${duration}ms`; 
+                // ******** AKHIR PERBAIKAN ********
+
+                // Animasikan bar
+                setTimeout(() => {
+                    progressBar.style.width = '100%';
+                }, 50); 
+
+                // Hitung dan update teks persen setiap 100ms
+                const startTime = Date.now();
+                const interval = setInterval(() => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(1, elapsed / duration);
+                    const percent = Math.floor(progress * 100);
+                    progressText.textContent = `${percent}% Complete`;
+
+                    if (progress >= 1) {
+                        clearInterval(interval);
+                        callback();
+                    }
+                }, 100); 
+            }
+
+            // 2. Fungsi saat tombol 'I Agree' diklik (Commitment Agreed)
+            window.agreeToCommitment = function() {
+                agreementPopup.style.display = 'none';
+                loadingPopup.style.display = 'flex';
+                
+                // Mulai loading bar selama 8 detik (sesuai permintaan Anda)
+                startProgressBar(8000, () => {
+                    loadingPopup.style.display = 'none';
+                    
+                    // Show the final success popup
+                    finalPopup.style.display = 'flex';
+                    const now = new Date();
+                    const formatted = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                    dateText.textContent = `This Is Our Day! ${formatted}`;
+                });
+            };
+
+            // 3. Fungsi untuk menutup agreement (Cancel)
+            window.closeAgreement = function() {
+                 agreementPopup.style.display = 'none';
+            };
+
+            // ************ END LOGIKA BARU ************
+
+            checkAllCheckboxes(); 
+        })();
     </script>
 </body>
 </html>
+
+
